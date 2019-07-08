@@ -3,10 +3,11 @@ const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-
+const fileupload = require('express-fileupload');
 const productRoutes = require("./api/routes/products");
 const orderRoutes = require("./api/routes/orders");
 const userRoutes = require('./api/routes/user');
+const comment_postRoutes = require('./api/routes/comment_post');
 
 mongoose.connect(
   "mongodb://nodedb:" +
@@ -17,12 +18,11 @@ mongoose.connect(
   }
 );
 mongoose.Promise = global.Promise;
-
 app.use(morgan("dev"));
 app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
+app.use(fileupload());
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -40,6 +40,8 @@ app.use((req, res, next) => {
 app.use("/products", productRoutes);
 app.use("/orders", orderRoutes);
 app.use("/user", userRoutes);
+app.use("/comment_post", comment_postRoutes);
+
 
 app.use((req, res, next) => {
   const error = new Error("Not found");
